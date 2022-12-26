@@ -120,6 +120,34 @@ def tube_data(n):
     X[:,0] = distribution.rvs(size=n)
     return deform_data(X)
 
+def deform_bridge_data(X: np.ndarray) -> np.ndarray:
+    """Deform points sampled on rectangle [-1:1, 0:1] to be 
+    sampled on the 'bridge' manifold.
+    Cf `utils.data.bridge_data` for more details about this manifold.
+
+    :param X: A n*2 array representing the input points
+    :returns: A n*2 array representing the output points
+    """
+    Y = X.copy()
+    Y[:,1] = 5*Y[:,1]*(0.2+Y[:,0]**2) + 5*(1 - Y[:,0]**2)
+    return Y
+
+def bridge_data(n: int) -> np.ndarray :
+    """Returns coordinates sampled on a 'bridge' manifold.
+    This manifold is delimited by the curves:
+    * x = -1
+    * x = +1
+    * y = 5*(0.2+x**2)
+    * y = 5*(1-x**2)
+
+    :param n: The number of points to sample.
+    :returns: A n*2 array representing the points.
+    """
+    distribution = tube_distribution(a=-1, b=1)
+    X = np.random.rand(n,2)
+    X[:,0] = distribution.rvs(size=n)
+    return deform_bridge_data(X)
+
 ########
 
 def generate_two_circles(n, noise=.1, noise_out=0):

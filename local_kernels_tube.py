@@ -29,6 +29,9 @@ figsize = (6,4)
 rc_fonts = {"text.usetex": True, "font.size": 14}
 plt.rcParams.update(rc_fonts)
 
+# Type of shape ?
+use_bridge_manifold = True
+
 # illustrate the OT plan for increasing n
 illustrate_conv_SP = True
 # create a gif animating the OT plan (a bit long)
@@ -52,7 +55,10 @@ beta /= beta.sum()
 if illustrate_conv_SP:
     for n in [300, 1000, 3000]:
         # data
-        X = udata.tube_data(n)
+        if use_bridge_manifold:
+            X = udata.bridge_data(n)
+        else:
+            X = udata.tube_data(n)
         X[:nn, 0] = -1
         X[:nn, 1] = posA
         X[nn:2*nn, 0] = 1
@@ -81,7 +87,8 @@ if illustrate_conv_SP:
             plt.scatter(X[nn+i,0], X[nn+i,1], color='r', s=2000*beta[i].item())
 
         e_weights = uplt.compute_edge_weights_SP(G, P, p, n,
-                                                 np.arange(nn), np.arange(nn, 2*nn))
+                                                 np.arange(nn), np.arange(nn, 2*nn),
+                                                 scale=4 if use_bridge_manifold else 20)
 
         uplt.my_draw(G, pos=X, edge_color='k', width=e_weights,
                     node_size=0, alpha=1, ax=ax)
